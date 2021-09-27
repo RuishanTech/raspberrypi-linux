@@ -583,6 +583,10 @@ static void option_instat_callback(struct urb *urb);
 
 
 static const struct usb_device_id option_ids[] = {
+	//+add by airm2m for Air72x
+    { USB_DEVICE(0x1782, 0x4e00) },    /* 720U 系列*/
+    { USB_DEVICE(0x1286, 0x4e3d) },    /* 720 系列*/
+    //-add by airm2m for Air72x
 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_COLT) },
 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_RICOLA) },
 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_RICOLA_LIGHT) },
@@ -2116,6 +2120,9 @@ static struct usb_serial_driver option_1port_device = {
 #ifdef CONFIG_PM
 	.suspend           = usb_wwan_suspend,
 	.resume            = usb_wwan_resume,
+	//+add by airm2m for Air720
+    .reset_resume      = usb_wwan_resume,
+    //-add by airm2m for Air720
 #endif
 };
 
@@ -2143,6 +2150,17 @@ static int option_probe(struct usb_serial *serial,
 	/* Never bind to the CD-Rom emulation interface	*/
 	if (iface_desc->bInterfaceClass == USB_CLASS_MASS_STORAGE)
 		return -ENODEV;
+
+	//+add by airm2m for Air72x
+	if (dev_desc->idVendor == cpu_to_le16(0x1286) &&
+		dev_desc->idProduct == cpu_to_le16(0x4e3d) &&
+		iface_desc->bInterfaceNumber <= 1)
+			return -ENODEV;
+	if (dev_desc->idVendor == cpu_to_le16(0x1782) &&
+		dev_desc->idProduct == cpu_to_le16(0x4e00) &&
+		iface_desc->bInterfaceNumber <= 1)
+			return -ENODEV;
+    //-add by airm2m for Air72x
 
 	/*
 	 * Don't bind reserved interfaces (like network ones) which often have
