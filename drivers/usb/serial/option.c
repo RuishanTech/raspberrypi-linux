@@ -2152,6 +2152,7 @@ static int option_probe(struct usb_serial *serial,
 		return -ENODEV;
 
 	//+add by airm2m for Air72x
+	struct usb_device_descriptor *dev_desc = &serial->dev->descriptor;
 	if (dev_desc->idVendor == cpu_to_le16(0x1286) &&
 		dev_desc->idProduct == cpu_to_le16(0x4e3d) &&
 		iface_desc->bInterfaceNumber <= 1)
